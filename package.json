@@ -1,0 +1,12 @@
+{
+  "name": "hand_in_template",
+  "description": "...",
+  "version": "4.2.0",
+  "private": true,
+  "devDependencies": {
+    "grunt": "^0.4.2",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-connect": "*",
+    "grunt-latex": "*"
+  }
+}
