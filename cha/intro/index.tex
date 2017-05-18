@@ -1,0 +1,14 @@
+\chapter{Introduction}
+In this mini project we attempt to model and then verify certain aspects of our semester project.
+The semester project is a study of how to develop a system, which synchronizes multiple devices in a network, such that playback of audio can be manipulated to appear synchronous.
+
+These devices are Android smartphones, and the network is a WiFi Direct\footnote{\url{http://www.wi-fi.org/discover-wi-fi/wi-fi-direct}} group managed by our application.
+We construct the WiFi Direct groups with an explicit \textit{master}, who controls the playback, hereby assigning a \textit{slave} role to all devices joining the \textit{session}.
+The overall approach of the system is to:
+\begin{enumerate}[label=\itshape\alph*\upshape)]
+    \item Connect all slaves to the master;\label{itm:connect}
+    \item synchronize the slaves to the master, by determining local offset on the slaves;\label{itm:sync}
+    \item transmit music data and playback commands from master to slaves;\label{itm:txrx}
+    \item use local offset to execute playback commands at the correct time on the slaves.
+\end{enumerate}
+

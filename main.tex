@@ -1,8 +1,3 @@
-% deliverable
-%
-% Licensed under MIT License
-%
-% Page creation engine
 \documentclass[12pt,a4paper,article,oneside]{memoir}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -12,13 +7,16 @@
 \usepackage{titling}
 \usepackage[pagestyles]{titlesec}
 \titleformat{\chapter}[hang]{\huge\bfseries}{}{0pt}{}[
-    \vspace{-0.5ex}%
+    \vspace{-1.8ex}%
     \rule{\textwidth}{0.5pt}%
     \vspace{-1.5cm}
 ]
+\titlespacing*{\chapter}{0pt}{20pt}{40pt}
 \renewcommand{\thechapter}{}
 \renewcommand{\thesection}{\Roman{section}}
 \renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+\usepackage{caption}
+\captionsetup{font=footnotesize, labelfont=bf}
 
 \pretitle{\vspace{-1cm}\centering\HUGE\bfseries\scshape}
 \posttitle{\\
@@ -37,21 +35,22 @@
 % Meta-data
 \title{TOV Mini Project\\Verification}
 \author{SW806F17\\
-\footnotesize\texttt{<mmichn13@student.aau.dk> | <tinydick@student.aau.dk> | <ginger1@student.aau.dk> | <ginger2@student.aau.dk> | <poopirate@student.aau.dk>}}
-\date{January 5, 2017}
+\footnotesize\texttt{<mmichn13@student.aau.dk> <tinydick@student.aau.dk> <ginger1@student.aau.dk> <ginger2@student.aau.dk> <poopirate@student.aau.dk>}}
+\date{May 19, 2017}
 
 % Main modules
+\usepackage{import}
 \usepackage{url}      % URL
 \usepackage{hyperref} % Links
 \usepackage{moreverb} % Encoding
 \usepackage{csquotes}
-
+\usepackage{xcolor}
+\usepackage[inline]{enumitem}
+\setlist{itemsep=1pt}
+\usepackage{graphicx}
 % Document
 \begin{document}
 \maketitle
-
-% Chapter files listing
-\input{cha/1/main.tex}
-% End of chapter files listing
-
+\subimport{cha/}{index.tex}
 \end{document}
+
