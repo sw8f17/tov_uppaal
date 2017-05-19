@@ -3,15 +3,32 @@ To use our amazing model of our system, we perform a set of queries.
 These queries are used to verify certain assumptions about the system, and to prove particular aspects.
 
 \bigskip
-The first aspect we want to prove it, that our system does not contain any deadlocks, which would otherwise interrupt further execution.
+The first aspect we want to prove is, that our system does not contain any deadlocks, which would otherwise prevent further execution.
 The query used to check this in Uppaal is \code{A[] not deadlock}, which asks \enquote{is there invariantly not a deadlock in the system}.
 This query results in a \success, meaning that our system will never deadlock.
 
-The
+The second aspect we want to prove, consists of a myriad of assumption which we assume are correct about the connection between a master and its slaves.
+We have two sanity checks, which ensures that our implementation is correct.
+Because we want the slaves to be able to connect in a random order, we assign an id to each when they join the network made by the master.
+This id should be between $0$ and $N$, with $N$ being the total number of slaves; we use the following query to validate this\\
+\code{A[] forall(i:id\_t) Slave(i).in\_network imply Slave(i).id >= 0 and Slave(i).id < N}
+which return with a \success.
+We have a similar query, which checks that no pair of slaves will ever have the same id, unless ofcource they are the same instance. It goes:\\
+\code{A[] forall(i:id\_t) forall(j:id\_t) Slave(i).id == Slave(j).id imply i == j}
 
+After these sanity checks, we can continue with verifying properties about the network it self.
+We want to guarantee that at some point, all slaves will be in the network, and synchronized.
+This can be verified with the following two queries:\\
+\code{E<> forall(i:id\_t) Slave(i).in\_network}~and~\code{E<> forall(i:id\_t) Slave(i).in\_sync}
+which both return a \success.
 
+\section*{Statistical Model Checking}
+Because our model of the slaves contain a probability of drifting out of sync, we can use Uppaal SMC to calculate probabilities for certain aspects for the system.
 
-We use SMC so some queries can be made.
+One of such probabilities we want to calculate is the probability of all devices being connected to the master after a given number of Uppaal time units.
+We want to know what the probability is of all devices eventually being connected and in sync within 400 time units.
+The query for this looks as follows:\\
+\code{Pr[<=400] (<> forall(i:id\_t) Slave(i).in\_sync and Slave(i).in\_network)}\\
+The query returns a probability within the range of $0.99$--$1$ with a confidence of $0.99$.
+This tells us that it is highly likely for the system to be in a state where all slaves are connected to the master, and in sync.
 
-
-Lets inspect in simulator.

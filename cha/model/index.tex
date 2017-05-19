@@ -26,7 +26,7 @@ Our system consists of two templates, one for the \textit{master} device and one
 The system is instantiated with one master and five slaves.
 In the following two sections we present the templates for the master and slave.
 
-\section{Master Device}
+\section*{Master Device}
 The master device is the one which drives the system per say, and a system can only contain one master.
 
 In~\cref{fig:master_model} the master model template can be seen.
@@ -58,9 +58,7 @@ The template consists of four color coded \enquote{zones}, the initial location,
     \caption{Model of the \textit{master} device}\label{fig:master_model}
 \end{figure}
 
-Maybe more content about master model.
-
-\section{Slave Device}
+\section*{Slave Device}
 
 In the context of our system, the \textit{slave} is more passive, in that after having joined the \textit{master} it only receives commands.
 However, to represent the local synchronization being able to drift, we use a Uppaal SMC construct where the slaves have a $\frac{1}{1000}$ risk of drifting out of sync.
@@ -88,7 +86,7 @@ The four zoned are described as follows:
 
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=0.7\textwidth]{slave_model.pdf}
+    \includegraphics[width=0.5\textwidth]{slave_model.pdf}
     \caption{Model of a \textit{slave} device}\label{fig:slave_model}
 \end{figure}
 

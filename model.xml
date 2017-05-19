@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+int lock = 0;
+int msg_type = -1;
+clock master_clock;
+
+// Slaves
+int id_pool = 0;
+const int N = 4;
+typedef int[0,N-1] id_t;
+
+broadcast chan join_network, success;
+broadcast chan sync_handshake[N], play_music[N], pause_music[N], stop_music[N], next_song[N];
+
+
+const int sync_delay = 100;
+const int ack_wait_time = 10;
+const int idle_time = 20;</declaration>
+	<template>
+		<name>Master</name>
+		<declaration>clock sync_timer;
+clock x;
+int i_slave = 0;
+int n_slaves = 0;
+
+void slave_joined(){
+    n_slaves += 1;
+}
+</declaration>
+		<location id="id0" x="-748" y="-408" color="#ff00ff">
+			<committed/>
+		</location>
+		<location id="id1" x="-221" y="-306" color="#0000ff">
+			<committed/>
+		</location>
+		<location id="id2" x="-748" y="-306" color="#00ffff">
+			<committed/>
+		</location>
+		<location id="id3" x="-544" y="-306" color="#0000ff">
+			<committed/>
+		</location>
+		<location id="id4" x="-782" y="-68" color="#ffa500">
+			<committed/>
+		</location>
+		<location id="id5" x="-612" y="-68" color="#ffa500">
+			<label kind="invariant" x="-603" y="-59">x &lt;= ack_wait_time</label>
+		</location>
+		<location id="id6" x="-748" y="-204">
+			<name x="-739" y="-238">main_idle</name>
+			<label kind="exponentialrate" x="-731" y="-221">2</label>
+		</location>
+		<location id="id7" x="-850" y="-204">
+			<label kind="invariant" x="-909" y="-187">master_clock &lt; 1</label>
+		</location>
+		<init ref="id7"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-918" y="-340">i_slave == n_slaves</label>
+			<label kind="assignment" x="-918" y="-323">i_slave = 0,
+x := 0</label>
+			<nail x="-782" y="-374"/>
+			<nail x="-782" y="-238"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-773" y="-136">x == ack_wait_time</label>
+			<label kind="assignment" x="-731" y="-119">x := 0</label>
+			<nail x="-629" y="-136"/>
+			<nail x="-748" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-807" y="-476">i_slave &lt; n_slaves</label>
+			<label kind="synchronisation" x="-833" y="-459">sync_handshake[i_slave]!</label>
+			<label kind="assignment" x="-790" y="-442">i_slave += 1</label>
+			<nail x="-799" y="-408"/>
+			<nail x="-799" y="-442"/>
+			<nail x="-697" y="-442"/>
+			<nail x="-697" y="-408"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-739" y="-399">sync_timer &gt;= sync_delay</label>
+			<label kind="assignment" x="-739" y="-382">sync_timer := 0</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-433" y="-459">i_slave &lt; n_slaves</label>
+			<nail x="-204" y="-340"/>
+			<nail x="-204" y="-374"/>
+			<nail x="-255" y="-442"/>
+			<nail x="-510" y="-442"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-467" y="-136">i_slave == n_slaves</label>
+			<label kind="assignment" x="-510" y="-119">msg_type = -1, i_slave = 0, x := 0</label>
+			<nail x="-204" y="-272"/>
+			<nail x="-204" y="-170"/>
+			<nail x="-255" y="-102"/>
+			<nail x="-510" y="-102"/>
+			<nail x="-544" y="-204"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-492" y="-425">msg_type == -1 or msg_type == 1</label>
+			<label kind="synchronisation" x="-492" y="-408">play_music[i_slave]!</label>
+			<label kind="assignment" x="-492" y="-391">msg_type = 1, i_slave += 1</label>
+			<nail x="-510" y="-374"/>
+			<nail x="-255" y="-374"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-493" y="-221">msg_type == -1 or msg_type == 4</label>
+			<label kind="synchronisation" x="-493" y="-204">next_song[i_slave]!</label>
+			<label kind="assignment" x="-493" y="-187">msg_type = 4, i_slave += 1</label>
+			<nail x="-510" y="-170"/>
+			<nail x="-255" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-493" y="-289">msg_type == -1 or msg_type == 3</label>
+			<label kind="synchronisation" x="-493" y="-272">pause_music[i_slave]!</label>
+			<label kind="assignment" x="-493" y="-255">msg_type = 3, i_slave += 1</label>
+			<nail x="-510" y="-238"/>
+			<nail x="-255" y="-238"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-493" y="-357">msg_type == -1 or msg_type == 2</label>
+			<label kind="synchronisation" x="-493" y="-340">stop_music[i_slave]!</label>
+			<label kind="assignment" x="-493" y="-323">msg_type = 2, i_slave += 1</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-739" y="-272">n_slaves &gt; 0</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-731" y="-331">sync_timer &lt; sync_delay</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id6"/>
+			<nail x="-782" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-739" y="-51">lock == 1</label>
+			<label kind="synchronisation" x="-705" y="-68">success!</label>
+			<label kind="assignment" x="-756" y="-85">slave_joined(),
+x := 0</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-722" y="-170">join_network?</label>
+			<label kind="assignment" x="-697" y="-187">x := 0</label>
+			<nail x="-714" y="-170"/>
+			<nail x="-612" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="assignment" x="-832" y="-204">x := 0</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Slave</name>
+		<parameter>const id_t _id</parameter>
+		<declaration>// Place local declarations here.
+clock x;
+bool in_sync = false;
+bool in_network = false;
+int id = -1;
+
+void attempt_join(){
+    lock = 1;
+}
+
+void fail_join(){
+    lock = 0;
+}
+
+void successful_join(){
+    in_network = true;
+    id = id_pool;
+    id_pool += 1;
+    lock = 0;
+}
+
+void synchronize(){
+    in_sync = true;
+}
+
+void drift(){
+    in_sync = false;
+}</declaration>
+		<location id="id8" x="-1088" y="0" color="#0000ff">
+			<committed/>
+		</location>
+		<location id="id9" x="-1088" y="-136" color="#ff00ff">
+			<committed/>
+		</location>
+		<location id="id10" x="-1292" y="-68" color="#00ffff">
+			<label kind="exponentialrate" x="-1317" y="-93">2</label>
+		</location>
+		<location id="id11" x="-1292" y="-204" color="#ffa500">
+			<name x="-1360" y="-204">try_join</name>
+			<label kind="invariant" x="-1275" y="-204">x &lt;= ack_wait_time</label>
+		</location>
+		<location id="id12" x="-1292" y="-340" color="#ffa500">
+			<name x="-1300" y="-391">pre_join</name>
+			<label kind="invariant" x="-1292" y="-374">x &lt;= idle_time</label>
+		</location>
+		<location id="id13" x="-1122" y="-340">
+			<label kind="invariant" x="-1173" y="-374">x &lt;= idle_time</label>
+		</location>
+		<branchpoint id="id14" x="-1428" y="34">
+		</branchpoint>
+		<init ref="id13"/>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="-1428" y="-391">join_network?</label>
+			<label kind="assignment" x="-1402" y="-374">x:=0</label>
+			<nail x="-1326" y="-357"/>
+			<nail x="-1436" y="-357"/>
+			<nail x="-1436" y="-391"/>
+			<nail x="-1326" y="-391"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1411" y="-340">lock==1</label>
+			<label kind="assignment" x="-1402" y="-323">x:=0</label>
+			<nail x="-1326" y="-306"/>
+			<nail x="-1436" y="-306"/>
+			<nail x="-1436" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id10"/>
+			<label kind="assignment" x="-1419" y="-59">drift()</label>
+			<label kind="probability" x="-1419" y="-25">1</label>
+			<nail x="-1394" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id10"/>
+			<label kind="probability" x="-1351" y="26">999</label>
+			<nail x="-1343" y="26"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id14"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-1240" y="51">next_song[id]?</label>
+			<nail x="-1258" y="68"/>
+			<nail x="-1122" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-1240" y="17">pause_music[id]?</label>
+			<nail x="-1258" y="34"/>
+			<nail x="-1122" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-1240" y="-17">stop_music[id]?</label>
+			<nail x="-1258" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<nail x="-1088" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id10"/>
+			<nail x="-1088" y="-68"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-1241" y="-51">play_music[id]?</label>
+			<nail x="-1259" y="-34"/>
+			<nail x="-1122" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-1249" y="-170">sync_handshake[id]?</label>
+			<label kind="assignment" x="-1249" y="-153">synchronize()</label>
+			<nail x="-1258" y="-136"/>
+			<nail x="-1122" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-1461" y="-289">x == ack_wait_time</label>
+			<label kind="assignment" x="-1385" y="-272">fail_join(),
+x := 0</label>
+			<nail x="-1309" y="-272"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-1385" y="-136">success?</label>
+			<label kind="assignment" x="-1445" y="-153">successful_join()</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-1266" y="-306">lock != 1</label>
+			<label kind="synchronisation" x="-1266" y="-289">join_network!</label>
+			<label kind="assignment" x="-1266" y="-272">x := 0,
+attempt_join()</label>
+			<nail x="-1275" y="-272"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id12"/>
+			<label kind="assignment" x="-1224" y="-340">x := 0</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+// List one or more processes to be composed into a system.
+system Master, Slave;
+    </system>
+	<queries>
+		<query>
+			<formula>E&lt;&gt; forall(i: id_t) Slave(i).in_network
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>E&lt;&gt; forall(i: id_t) Slave(i).in_sync
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] forall(i: id_t) Slave(i).in_network imply Slave(i).id &gt;= 0 and Slave(i).id &lt; N
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] forall(i: id_t) forall(j: id_t) Slave(i).id == Slave(j).id imply i == j or Slave(i).id == -1
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>A[] not deadlock
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>Pr[&lt;=400] (&lt;&gt; forall(i :id_t) Slave(i).in_sync and Slave(i).in_network)
+			</formula>
+			<comment>
+			</comment>
+		</query>
+		<query>
+			<formula>Pr[&lt;=400] (&lt;&gt; forall(i :id_t) Slave(i).in_sync)
+			</formula>
+			<comment>
+			</comment>
+		</query>
+	</queries>
+</nta>
