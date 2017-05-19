@@ -39,14 +39,45 @@
 \date{May 19, 2017}
 
 % Main modules
+\usepackage[dvipsnames]{xcolor}
+\newcommand{\success}{\textcolor{Green}{success}}
 \usepackage{import}
 \usepackage{url}      % URL
+\usepackage[english]{varioref}
 \usepackage{hyperref} % Links
+\hypersetup{%
+    bookmarksnumbered,
+    bookmarksdepth=1,
+    pdfdisplaydoctitle,
+    breaklinks,
+    pdfprintscaling=None,
+    plainpages=false,
+    colorlinks,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black,
+    filecolor=black%
+}
+\usepackage[english, capitalize]{cleveref}
 \usepackage{moreverb} % Encoding
 \usepackage{csquotes}
-\usepackage{xcolor}
 \usepackage[inline]{enumitem}
 \setlist{itemsep=1pt}
+\usepackage{tcolorbox}
+\makeatletter
+\newtcbox{\code}{
+    on line,
+    fontupper=\small\ttfamily,
+    boxrule=0.5pt,
+    arc=2pt,
+    coltext=black,
+    colback=lightgray,
+    colframe=lightgray,
+    boxsep=0pt,
+    shrink tight,
+    extrude by=2pt
+}
+\makeatother
 \usepackage{graphicx}
 % Document
 \begin{document}

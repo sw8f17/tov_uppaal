@@ -1,6 +1,17 @@
 \chapter{Verification Through Querying}
+To use our amazing model of our system, we perform a set of queries.
+These queries are used to verify certain assumptions about the system, and to prove particular aspects.
+
+\bigskip
+The first aspect we want to prove it, that our system does not contain any deadlocks, which would otherwise interrupt further execution.
+The query used to check this in Uppaal is \code{A[] not deadlock}, which asks \enquote{is there invariantly not a deadlock in the system}.
+This query results in a \success, meaning that our system will never deadlock.
+
+The
+
+
+
 We use SMC so some queries can be made.
 
-Deadlock??
 
 Lets inspect in simulator.
